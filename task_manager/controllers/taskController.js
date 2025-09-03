@@ -1,38 +1,53 @@
 import * as taskService from '../data/taskService.js';
 
 
-export function getTasks(req, res) {
-    const allTasks = taskService.getAllTasks();
-    res.json(allTasks);
-}
-
-
-export function getTask(req, res) {
-    const task = taskService.getTaskById(Number(req.params.id));
-    if (!task) return res.status(404).json({ error: 'Task not found' });
-    res.json(task);
-}
-
-
-export function createTask(req, res) {
-    const { title, description, dueDate, status } = req.body;
-    if (!title || !description || !dueDate) {
-        return res.status(400).json({ error: 'Title, description, and dueDate are required' });
+export const getTasks = async (req, res) => {
+    try {
+        const tasks = await taskService.getTasks();
+        res.json(tasks);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
-    const task = taskService.createTask({ title, description, dueDate, status });
-    res.status(201).json(task);
-}
+};
 
 
-export function updateTask(req, res) {
-    const updatedTask = taskService.updateTask(Number(req.params.id), req.body);
-    if (!updatedTask) return res.status(404).json({ error: 'Task not found' });
-    res.json(updatedTask);
-}
+export const getTask = async (req, res) => {
+    try {
+        const task = await taskService.getTaskById(req.params.id);
+        if (!task) return res.status(404).json({ error: 'Task not found' });
+        res.json(task);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
+export const createTask = async (req, res) => {
+    try {
+        const task = await taskService.createTask(req.body);
+        res.status(201).json(task);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
 
 
-export function deleteTask(req, res) {
-    const success = taskService.deleteTask(Number(req.params.id));
-    if (!success) return res.status(404).json({ error: 'Task not found' });
-    res.json({ message: 'Task deleted successfully' });
-}
+export const updateTask = async (req, res) => {
+    try {
+        const task = await taskService.updateTask(req.params.id, req.body);
+        if (!task) return res.status(404).json({ error: 'Task not found' });
+        res.json(task);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
+
+export const deleteTask = async (req, res) => {
+    try {
+        const task = await taskService.deleteTask(req.params.id);
+        if (!task) return res.status(404).json({ error: 'Task not found' });
+        res.json({ message: 'Task deleted successfully' });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};

@@ -1,9 +1,19 @@
-export default class Task {
-    constructor(id, title, description, dueDate, status = 'pending') {
-        this.id = id;                 
-        this.title = title;
-        this.description = description;
-        this.dueDate = dueDate;
-        this.status = status;        
-    }
-}
+import mongoose from 'mongoose';
+
+const taskSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: [true, 'Task title is required'],
+    },
+    description: {
+        type: String,
+    },
+    completed: {
+        type: Boolean,
+        default: false,
+    },
+}, { timestamps: true });
+
+const Task = mongoose.model('Task', taskSchema);
+
+export default Task;
